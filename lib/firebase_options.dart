@@ -53,11 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCWjyCXpBfMxCkzem65moFUGjXTtvMieIs',
-    appId: '1:598226087803:web:7a0a4856949a3a3ac217de',
-    messagingSenderId: '598226087803',
-    projectId: 'task-empire',
-    authDomain: 'task-empire.firebaseapp.com',
-    storageBucket: 'task-empire.firebasestorage.app',
-  );
+      apiKey: 'AIzaSyCWjyCXpBfMxCkzem65moFUGjXTtvMieIs',
+      appId: '1:598226087803:web:7a0a4856949a3a3ac217de',
+      messagingSenderId: '598226087803',
+      projectId: 'task-empire',
+      authDomain: 'task-empire.firebaseapp.com',
+      storageBucket: 'task-empire.firebasestorage.app',
+      measurementId: "G-3ZFQP8MS9Q");
 }
