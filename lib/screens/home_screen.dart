@@ -58,12 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   PointsDisplay(),
                   SizedBox(height: 16),
-                  AdRewardCard(
-                    adService: AdService(
-                      adUnitId:
-                          'ca-app-pub-3940256099942544/5224354917', // Test ID
-                    ),
-                  ),
+                  AdRewardCard(),
                   SizedBox(height: 16),
                   ReferralSection(),
                   SizedBox(height: 16),

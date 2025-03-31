@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -16,7 +17,8 @@
   -->
   <base href="$FLUTTER_BASE_HREF">
 
-  <meta name="google-signin-client_id" content="598226087803-htjgpn8oq99d3k60rpbjngbm08vumm03.apps.googleusercontent.com">
+  <meta name="google-signin-client_id"
+    content="598226087803-htjgpn8oq99d3k60rpbjngbm08vumm03.apps.googleusercontent.com">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -29,12 +31,33 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <title>flutter_app</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Add these scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore-compat.js"></script>
+  <script src="https://apis.google.com/js/api.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCWjyCXpBfMxCkzem65moFUGjXTtvMieIs",
+      authDomain: "task-empire.firebaseapp.com",
+      projectId: "task-empire",
+      storageBucket: "task-empire.firebasestorage.app",
+      messagingSenderId: "598226087803",
+      appId: "1:598226087803:web:7a0a4856949a3a3ac217de",
+      measurementId: "G-3ZFQP8MS9Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
+
 <body>
   <script src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,22 +13,28 @@ class AuthService {
 
   Future<User?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
+      if (kIsWeb) {
+        final googleProvider = GoogleAuthProvider();
+        final userCredential = await _auth.signInWithPopup(googleProvider);
+        return userCredential.user;
+      } else {
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) return null;
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-      UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+        UserCredential userCredential =
+            await _auth.signInWithCredential(credential);
 
-      await _initializeUserData(userCredential.user!);
-      return userCredential.user;
+        await _initializeUserData(userCredential.user!);
+        return userCredential.user;
+      }
     } catch (e) {
       print('Error signing in with Google: $e');
       return null;

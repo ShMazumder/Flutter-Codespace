@@ -5,22 +5,22 @@ import '../models/user_model.dart';
 import '../services/user_service.dart';
 
 class AdRewardCard extends StatefulWidget {
-  final AdService adService;
-
-  const AdRewardCard({required this.adService, Key? key}) : super(key: key);
+  const AdRewardCard({Key? key}) : super(key: key);
 
   @override
   _AdRewardCardState createState() => _AdRewardCardState();
 }
 
 class _AdRewardCardState extends State<AdRewardCard> {
+  late final AdService _adService;
   bool _isLoading = false;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    widget.adService.loadAd();
+    _adService = getAdService();
+    _adService.loadAd();
   }
 
   @override
@@ -29,21 +29,21 @@ class _AdRewardCardState extends State<AdRewardCard> {
     final user = Provider.of<UserModel>(context);
 
     return Card(
-      margin: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(16),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.play_circle_filled, size: 40, color: Colors.red),
-                SizedBox(width: 16),
+                const Icon(Icons.play_circle_filled, size: 40, color: Colors.red),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Watch Ad for Points',
                         style: TextStyle(
                           fontSize: 18,
@@ -56,25 +56,23 @@ class _AdRewardCardState extends State<AdRewardCard> {
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             if (_error != null)
               Padding(
-                padding: EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
                   _error!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 48),
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.blue,
-                disabledForegroundColor: Colors.black,
+                minimumSize: const Size(double.infinity, 48),
+                backgroundColor: Colors.green,
               ),
               onPressed: _isLoading ? null : () => _showAd(user, userService),
               child: _isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
+                  ? const CircularProgressIndicator(color: Colors.white)
                   : Text('Watch Ad (+${AdService.pointsPerAd} pts)'),
             ),
           ],
@@ -89,16 +87,20 @@ class _AdRewardCardState extends State<AdRewardCard> {
       _error = null;
     });
 
-    await widget.adService.showAd(
+    await _adService.showAd(
       onReward: (points) async {
         await userService.addPoints(user.id, points);
-        setState(() => _isLoading = false);
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
       },
       onError: (error) {
-        setState(() {
-          _isLoading = false;
-          _error = error;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _error = error;
+          });
+        }
       },
     );
   }

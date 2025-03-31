@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth_provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class AuthScreen extends StatelessWidget {
   @override
@@ -34,11 +35,14 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-                  bool success = await Provider.of<AuthProvider>(context, listen: false)
-                      .signInWithGoogle();
+                  bool success =
+                      await Provider.of<AuthProvider>(context, listen: false)
+                          .signInWithGoogle();
+
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Login failed. Please try again.')),
+                      SnackBar(
+                          content: Text('Login failed. Please try again.')),
                     );
                   }
                 },
