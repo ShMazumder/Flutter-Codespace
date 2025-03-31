@@ -60,7 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 16),
                   AdRewardCard(
                     adService: AdService(
-                      adUnitId: 'ca-app-pub-3940256099942544/5224354917',
+                      adUnitId:
+                          'ca-app-pub-3940256099942544/5224354917', // Test ID
                     ),
                   ),
                   SizedBox(height: 16),
@@ -136,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
           taskId: task.id,
           status: TaskStatus.completed,
         );
-        
+
         await _userService.addPoints(userId, task.points);
 
         if (task.isDaily) {
