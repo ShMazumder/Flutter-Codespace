@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../models/referral_tier.dart';
 
 class ReferralService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -9,8 +9,10 @@ class ReferralService {
     return doc.data()?['referralCode'] ?? '';
   }
 
-  Future<void> handleReferral(String referredUserId, String referralCode) async {
-    final query = await _firestore.collection('users')
+  Future<void> handleReferral(
+      String referredUserId, String referralCode) async {
+    final query = await _firestore
+        .collection('users')
         .where('referralCode', isEqualTo: referralCode)
         .limit(1)
         .get();
@@ -20,21 +22,23 @@ class ReferralService {
     final referrerId = query.docs.first.id;
     if (referrerId == referredUserId) return;
 
-    await _firestore.collection('users')
+    await _firestore
+        .collection('users')
         .doc(referrerId)
         .collection('referrals')
         .doc(referredUserId)
         .set({
-          'referredUserId': referredUserId,
-          'timestamp': FieldValue.serverTimestamp(),
-          'pointsAwarded': false,
-        });
+      'referredUserId': referredUserId,
+      'timestamp': FieldValue.serverTimestamp(),
+      'pointsAwarded': false,
+    });
 
     await _updateReferralCount(referrerId);
   }
 
   Future<void> _updateReferralCount(String userId) async {
-    final referrals = await _firestore.collection('users')
+    final referrals = await _firestore
+        .collection('users')
         .doc(userId)
         .collection('referrals')
         .count()
@@ -45,7 +49,7 @@ class ReferralService {
       'totalReferrals': totalReferrals,
     });
 
-    await _awardTieredPoints(userId, totalReferrals);
+    await _awardTieredPoints(userId, totalReferrals ?? 0);
   }
 
   Future<void> _awardTieredPoints(String userId, int totalReferrals) async {
@@ -61,7 +65,8 @@ class ReferralService {
 
     if (pointsToAward > 0) {
       final batch = _firestore.batch();
-      final referrals = await _firestore.collection('users')
+      final referrals = await _firestore
+          .collection('users')
           .doc(userId)
           .collection('referrals')
           .where('pointsAwarded', isEqualTo: false)

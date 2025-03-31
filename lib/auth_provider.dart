@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'auth_service.dart';
+import './services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthProvider with ChangeNotifier {

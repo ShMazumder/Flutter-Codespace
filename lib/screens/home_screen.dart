@@ -10,6 +10,7 @@ import '../components/main_nav_bar.dart';
 import '../components/referral_section.dart';
 import '../components/ad_reward_card.dart';
 import '../services/ad_service.dart';
+import '../models/task_model.dart';
 
 class HomeScreen extends StatefulWidget {
   @override

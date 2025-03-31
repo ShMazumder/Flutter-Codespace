@@ -68,7 +68,9 @@ class _AdRewardCardState extends State<AdRewardCard> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 48),
-                primary: Colors.green,
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.blue,
+                disabledForegroundColor: Colors.black,
               ),
               onPressed: _isLoading ? null : () => _showAd(user, userService),
               child: _isLoading

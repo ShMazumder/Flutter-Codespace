@@ -26,7 +26,7 @@ class TaskCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: task.color.withOpacity(0.2),
+                color: task.color.withAlpha(40),
                 shape: BoxShape.circle,
               ),
               child: Icon(task.icon, color: task.color, size: 28),
@@ -67,7 +67,9 @@ class TaskCard extends StatelessWidget {
       case TaskStatus.available:
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.blue,
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.blue,
+            disabledForegroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -79,7 +81,9 @@ class TaskCard extends StatelessWidget {
       case TaskStatus.participated:
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
-            primary: Colors.green,
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.blue,
+            disabledForegroundColor: Colors.black,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
