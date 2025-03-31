@@ -7,29 +7,46 @@ import 'auth_provider.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'firebase_options.dart';
+import 'models/user_model.dart'; // Add this import
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  if(!kIsWeb){
-     MobileAds.instance.initialize();
+  if (!kIsWeb) {
+    await MobileAds.instance.initialize();
   }
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AuthProvider(),
-      child: MaterialApp(
-        title: 'Task Reward App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: AuthWrapper(),
+    return MaterialApp(
+      title: 'Task Reward App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: AuthWrapper(),
+      // Add error boundary
+      builder: (context, child) {
+        ErrorWidget.builder = (errorDetails) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error: ${errorDetails.exception}'),
+            ),
+          );
+        };
+        return child!;
+      },
     );
   }
 }
@@ -37,7 +54,20 @@ class MyApp extends StatelessWidget {
 class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-    return authProvider.user == null ? AuthScreen() : HomeScreen();
+    final authProvider = context.watch<AuthProvider>();
+    
+    if (authProvider.user == null) {
+      return AuthScreen();
+    } else {
+      return MultiProvider(
+        providers: [
+          Provider.value(value: authProvider.user!),
+          ChangeNotifierProvider(
+            create: (_) => UserModel.fromFirebaseUser(authProvider.user!),
+          ),
+        ],
+        child: HomeScreen(),
+      );
+    }
   }
 }

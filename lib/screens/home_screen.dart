@@ -23,7 +23,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserModel>(context);
+    // final user = Provider.of<UserModel>(context);
+    final user = context.watch<UserModel?>();
+    
+    if (user == null) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
