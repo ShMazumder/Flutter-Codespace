@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app/models/user_model.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
@@ -16,6 +17,7 @@ class AuthService {
       if (kIsWeb) {
         final googleProvider = GoogleAuthProvider();
         final userCredential = await _auth.signInWithPopup(googleProvider);
+        await _initializeUserData(userCredential.user!);
         return userCredential.user;
       } else {
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
