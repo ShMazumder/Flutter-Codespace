@@ -59,7 +59,7 @@ class DailyRewardScreenState extends State<DailyRewardScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  PointsDisplay(),
+                  PointsDisplay(user: widget.user),
                   const SizedBox(height: 16),
                   TaskList(
                     tasks: tasks,
