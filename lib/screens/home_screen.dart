@@ -24,19 +24,26 @@ class _HomeScreenState extends State<HomeScreen> {
   final UserService _userService = UserService();
   int _currentIndex = 0;
   late PageController _pageController;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeData();
-    });
+    _initializeData();
   }
 
   Future<void> _initializeData() async {
-    final adminProvider = Provider.of<AdminProvider>(context, listen: false);
-    await adminProvider.checkAdminStatus();
+    try {
+      final adminProvider = Provider.of<AdminProvider>(context, listen: false);
+      await adminProvider.checkAdminStatus();
+    } catch (e) {
+      debugPrint('Error initializing data: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -47,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     final user = Provider.of<UserModel>(context);
     final adminProvider = Provider.of<AdminProvider>(context);
 
@@ -61,35 +72,34 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: _currentIndex == 0
           ? AppBar(
-              title: Text('Daily Tasks'),
+              title: const Text('Daily Tasks'),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.notifications),
-                  onPressed: () {},
+                  icon: const Icon(Icons.notifications),
+                  onPressed: _showNotifications,
                 ),
               ],
             )
           : null,
       body: PageView(
         controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: _screens,
-        onPageChanged: (index) {
-          setState(() => _currentIndex = index);
-        },
+        onPageChanged: (index) => setState(() => _currentIndex = index),
       ),
-      bottomNavigationBar: MainNavBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          // if (index == 1 && adminProvider.isAdmin) {
-          //   // go to admin
-          //   return;
-          // }
-          
-          _pageController.jumpToPage(index);
-          setState(() => _currentIndex = index);
-        },
-      ),
+      bottomNavigationBar: _buildBottomNavBar(adminProvider),
+    );
+  }
+
+  Widget _buildBottomNavBar(AdminProvider adminProvider) {
+    return MainNavBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        // Prevent navigation to admin screen if not admin
+        // if (index == 1 && !adminProvider.isAdmin) return;
+        _pageController.jumpToPage(index);
+        setState(() => _currentIndex = index);
+      },
     );
   }
 
@@ -98,27 +108,33 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: _taskService.getAvailableTasks(user.id),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(child: Text('No tasks available'));
+          return const Center(child: Text('No tasks available'));
         }
 
-        final tasks =
-            snapshot.data!.docs.map((doc) => Task.fromFirestore(doc)).toList();
+        final tasks = snapshot.data!.docs
+            .map((doc) => Task.fromFirestore(doc))
+            .toList();
 
-        return SingleChildScrollView(
-          child: Padding(
+        return RefreshIndicator(
+          onRefresh: () => _initializeData(),
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
                 PointsDisplay(),
-                SizedBox(height: 16),
-                AdRewardCard(),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
+                const AdRewardCard(),
+                const SizedBox(height: 16),
                 ReferralSection(),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 TaskList(
                   tasks: tasks,
                   onTaskAction: (task) => _handleTaskAction(task, user.id),
@@ -133,15 +149,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildAdminScreen() {
-    return AdminScreen(); // Your existing AdminScreen widget
+    return AdminScreen();
   }
 
   Widget _buildRewardsScreen() {
-    return Center(child: Text('Rewards Screen'));
+    return const Center(child: Text('Rewards Screen'));
   }
 
   Widget _buildReferralScreen() {
-    return Center(child: Text('Referral Screen'));
+    return const Center(child: Text('Referral Screen'));
   }
 
   Widget _buildProfileScreen(UserModel user) {
@@ -151,21 +167,24 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage:
-                user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-            child: user.photoUrl == null ? Icon(Icons.person, size: 50) : null,
+            backgroundImage: user.photoUrl != null 
+                ? NetworkImage(user.photoUrl!) 
+                : null,
+            child: user.photoUrl == null 
+                ? const Icon(Icons.person, size: 50) 
+                : null,
           ),
-          SizedBox(height: 16),
-          Text(user.name, style: TextStyle(fontSize: 24)),
-          SizedBox(height: 8),
+          const SizedBox(height: 16),
+          Text(user.name, style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 8),
           Text(user.email),
-          SizedBox(height: 16),
-          Text('Points: ${user.points}', style: TextStyle(fontSize: 20)),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
+          Text('Points: ${user.points}', 
+              style: const TextStyle(fontSize: 20)),
+          const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () =>
-                Provider.of<AuthProvider>(context, listen: false).signOut(),
-            child: Text('Sign Out'),
+            onPressed: _confirmSignOut,
+            child: const Text('Sign Out'),
           ),
         ],
       ),
@@ -173,24 +192,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSpecialTasksSection(String userId, int streak) {
-    if (streak < 3) return SizedBox();
+    if (streak < 3) return const SizedBox();
 
     return StreamBuilder<QuerySnapshot>(
       stream: _taskService.getAvailableTasks(userId),
       builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return SizedBox();
+        if (snapshot.hasError) return const SizedBox();
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const SizedBox();
 
         final specialTasks = snapshot.data!.docs
             .map((doc) => Task.fromFirestore(doc))
             .where((t) => t.type == TaskType.special)
             .toList();
 
-        if (specialTasks.isEmpty) return SizedBox();
+        if (specialTasks.isEmpty) return const SizedBox();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               child: Text(
                 'Special Tasks',
@@ -233,9 +253,39 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update task: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update task: $e')),
+        );
+      }
+    }
+  }
+
+  void _showNotifications() {
+    // Implement notification logic
+  }
+
+  Future<void> _confirmSignOut() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Sign Out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Sign Out'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      await Provider.of<AuthProvider>(context, listen: false).signOut();
     }
   }
 }
