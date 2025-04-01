@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum TaskStatus { available, participated, completed }
-enum TaskType { daily, special, referral, ad }
+
+enum TaskType { daily, special, referral, ad, dailyWatchAd, dailyVisit, invite }
 
 class Task {
   final String id;
@@ -50,38 +51,61 @@ class Task {
 
   static IconData _getIcon(String iconName) {
     switch (iconName) {
-      case 'person': return Icons.person;
-      case 'play': return Icons.play_circle_fill;
-      case 'people': return Icons.people;
-      case 'star': return Icons.star;
-      default: return Icons.task;
+      case 'person':
+        return Icons.person;
+      case 'play':
+        return Icons.play_circle_fill;
+      case 'people':
+        return Icons.people;
+      case 'star':
+        return Icons.star;
+      case 'watch':
+        return Icons.play_circle_filled;
+      case 'visit':
+        return Icons.open_in_browser;
+      case 'invite':
+        return Icons.share;
+      default:
+        return Icons.task;
     }
   }
 
   static Color _getColor(String colorName) {
     switch (colorName) {
-      case 'blue': return Colors.blue;
-      case 'red': return Colors.red;
-      case 'green': return Colors.green;
-      case 'amber': return Colors.amber;
-      default: return Colors.grey;
+      case 'blue':
+        return Colors.blue;
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'amber':
+        return Colors.amber;
+      default:
+        return Colors.grey;
     }
   }
 
   static TaskType _getType(String type) {
     switch (type) {
-      case 'special': return TaskType.special;
-      case 'referral': return TaskType.referral;
-      case 'ad': return TaskType.ad;
-      default: return TaskType.daily;
+      case 'special':
+        return TaskType.special;
+      case 'referral':
+        return TaskType.referral;
+      case 'ad':
+        return TaskType.ad;
+      default:
+        return TaskType.daily;
     }
   }
 
   static TaskStatus _getStatus(String status) {
     switch (status) {
-      case 'participated': return TaskStatus.participated;
-      case 'completed': return TaskStatus.completed;
-      default: return TaskStatus.available;
+      case 'participated':
+        return TaskStatus.participated;
+      case 'completed':
+        return TaskStatus.completed;
+      default:
+        return TaskStatus.available;
     }
   }
 }

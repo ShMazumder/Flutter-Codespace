@@ -37,7 +37,7 @@ class TaskService {
       String userId, int currentStreak) async {
     final specialTasks = await _firestore
         .collection('tasks')
-        .where('type', isEqualTo: 'special')
+        .where('type', isEqualTo: 'dailyVisit')
         .where('requiredStreak', isLessThanOrEqualTo: currentStreak)
         .get();
 
@@ -53,4 +53,25 @@ class TaskService {
       });
     }
   }
+
+  //   Future<void> checkAndUnlockSpecialTasks(
+  //     String userId, int currentStreak) async {
+  //   final specialTasks = await _firestore
+  //       .collection('tasks')
+  //       .where('type', isEqualTo: 'special')
+  //       .where('requiredStreak', isLessThanOrEqualTo: currentStreak)
+  //       .get();
+
+  //   for (var task in specialTasks.docs) {
+  //     await _firestore
+  //         .collection('users')
+  //         .doc(userId)
+  //         .collection('tasks')
+  //         .doc(task.id)
+  //         .set({
+  //       ...task.data(),
+  //       'status': 'available',
+  //     });
+  //   }
+  // }
 }

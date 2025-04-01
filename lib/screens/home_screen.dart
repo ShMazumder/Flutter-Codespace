@@ -13,6 +13,8 @@ import '../admin_provider.dart';
 import '../models/task_model.dart';
 import 'admin_screen.dart';
 import '../auth_provider.dart';
+import '../services/task_service.dart';
+import '../services/user_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -113,9 +115,8 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: Text('No tasks available'));
         }
 
-        final tasks = snapshot.data!.docs
-            .map((doc) => Task.fromFirestore(doc))
-            .toList();
+        final tasks =
+            snapshot.data!.docs.map((doc) => Task.fromFirestore(doc)).toList();
 
         return RefreshIndicator(
           onRefresh: () => _initializeData(),
@@ -129,11 +130,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 16),
                 ReferralSection(),
                 const SizedBox(height: 16),
+                // TaskList(
+                //   tasks: tasks,
+                //   onTaskAction: (task) => _handleTaskAction(task, user.id),
+                // ),
                 TaskList(
                   tasks: tasks,
-                  onTaskAction: (task) => _handleTaskAction(task, user.id),
+                  user: user, // Make sure to pass the UserModel
+                  taskService: _taskService, // Pass the TaskService instance
+                  userService: _userService, // Pass the UserService instance
+                  onTaskAction: (task) {
+                    // This can remain for any parent-level handling
+                    // Though most logic is now in TaskCard
+                  },
                 ),
-                _buildSpecialTasksSection(user.id, user.dailyStreak),
+                _buildSpecialTasksSection(user, user.dailyStreak),
               ],
             ),
           ),
@@ -161,11 +172,10 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           CircleAvatar(
             radius: 50,
-            backgroundImage: user.photoUrl != null 
-                ? NetworkImage(user.photoUrl!) 
-                : null,
-            child: user.photoUrl == null 
-                ? const Icon(Icons.person, size: 50) 
+            backgroundImage:
+                user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+            child: user.photoUrl == null
+                ? const Icon(Icons.person, size: 50)
                 : null,
           ),
           const SizedBox(height: 16),
@@ -173,8 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 8),
           Text(user.email),
           const SizedBox(height: 16),
-          Text('Points: ${user.points}', 
-              style: const TextStyle(fontSize: 20)),
+          Text('Points: ${user.points}', style: const TextStyle(fontSize: 20)),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _confirmSignOut,
@@ -185,18 +194,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSpecialTasksSection(String userId, int streak) {
+  Widget _buildSpecialTasksSection(UserModel user, int streak) {
     if (streak < 3) return const SizedBox();
 
     return StreamBuilder<QuerySnapshot>(
-      stream: _taskService.getAvailableTasks(userId),
+      stream: _taskService.getAvailableTasks(user.id),
       builder: (context, snapshot) {
         if (snapshot.hasError) return const SizedBox();
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const SizedBox();
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+          return const SizedBox();
 
         final specialTasks = snapshot.data!.docs
             .map((doc) => Task.fromFirestore(doc))
-            .where((t) => t.type == TaskType.special)
+            .where((t) => t.type == TaskType.dailyVisit)
             .toList();
 
         if (specialTasks.isEmpty) return const SizedBox();
@@ -214,15 +224,64 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            // TaskList(
+            //   tasks: specialTasks,
+            //   onTaskAction: (task) => _handleTaskAction(task, userId),
+            // ),
             TaskList(
               tasks: specialTasks,
-              onTaskAction: (task) => _handleTaskAction(task, userId),
-            ),
+              user: user, // Make sure to pass the UserModel
+              taskService: _taskService, // Pass the TaskService instance
+              userService: _userService, // Pass the UserService instance
+              onTaskAction: (task) {
+                // This can remain for any parent-level handling
+                // Though most logic is now in TaskCard
+              },
+            )
           ],
         );
       },
     );
   }
+
+  // Widget _buildSpecialTasksSection(String userId, int streak) {
+  //   if (streak < 3) return const SizedBox();
+
+  //   return StreamBuilder<QuerySnapshot>(
+  //     stream: _taskService.getAvailableTasks(userId),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasError) return const SizedBox();
+  //       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const SizedBox();
+
+  //       final specialTasks = snapshot.data!.docs
+  //           .map((doc) => Task.fromFirestore(doc))
+  //           .where((t) => t.type == TaskType.special)
+  //           .toList();
+
+  //       if (specialTasks.isEmpty) return const SizedBox();
+
+  //       return Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const Padding(
+  //             padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+  //             child: Text(
+  //               'Special Tasks',
+  //               style: TextStyle(
+  //                 fontSize: 18,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ),
+  //           TaskList(
+  //             tasks: specialTasks,
+  //             onTaskAction: (task) => _handleTaskAction(task, userId),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   Future<void> _handleTaskAction(Task task, String userId) async {
     try {
