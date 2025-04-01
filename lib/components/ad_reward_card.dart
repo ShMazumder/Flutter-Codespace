@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 import '../services/user_service.dart';
 
 class AdRewardCard extends StatefulWidget {
-  const AdRewardCard({Key? key}) : super(key: key);
+  const AdRewardCard({super.key});
 
   @override
   _AdRewardCardState createState() => _AdRewardCardState();

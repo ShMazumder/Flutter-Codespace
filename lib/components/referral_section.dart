@@ -6,6 +6,8 @@ import '../services/referral_service.dart';
 import '../models/referral_tier.dart';
 
 class ReferralSection extends StatelessWidget {
+  const ReferralSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel>(context);

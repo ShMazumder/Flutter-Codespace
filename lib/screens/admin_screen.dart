@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../admin_provider.dart';
 
 class AdminScreen extends StatefulWidget {
+  const AdminScreen({super.key});
+
   @override
   _AdminScreenState createState() => _AdminScreenState();
 }

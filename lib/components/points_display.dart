@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 
 class PointsDisplay extends StatelessWidget {
+  const PointsDisplay({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel>(context);

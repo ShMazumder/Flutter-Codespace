@@ -15,6 +15,8 @@ import 'admin_screen.dart';
 import '../auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -61,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final user = Provider.of<UserModel>(context);
     final adminProvider = Provider.of<AdminProvider>(context);
 
-    final List<Widget> _screens = [
+    final List<Widget> screens = [
       _buildTaskScreen(user),
       if (adminProvider.isAdmin) _buildAdminScreen(),
       _buildRewardsScreen(),
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: _screens,
+        children: screens,
         onPageChanged: (index) => setState(() => _currentIndex = index),
       ),
       bottomNavigationBar: MainNavBar(

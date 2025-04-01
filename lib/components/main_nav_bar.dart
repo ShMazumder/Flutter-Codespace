@@ -9,8 +9,8 @@ class MainNavBar extends StatelessWidget {
   const MainNavBar({
     required this.currentIndex,
     required this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -19,8 +19,8 @@ class TaskCard extends StatelessWidget {
     required this.user,
     required this.taskService,
     required this.userService,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

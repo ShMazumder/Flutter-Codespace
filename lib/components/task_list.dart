@@ -18,8 +18,8 @@ class TaskList extends StatelessWidget {
     required this.taskService,
     required this.userService,
     required this.onTaskAction,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
