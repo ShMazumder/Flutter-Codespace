@@ -75,6 +75,18 @@ class TaskService {
   //   }
   // }
 
+  Stream<QuerySnapshot> getAvailableVisitTasks(String userId) {
+    return _firestore
+        // .collection('users')
+        // .doc(userId)
+        .collection('tasks')
+        .where('status', isEqualTo: 'available')
+        .snapshots();
+    // .map((snapshot) => snapshot.docs
+    //     .map((doc) => Task.fromFirestore(doc))
+    //     .toList());
+  }
+
   Stream<QuerySnapshot> getAvailableRewardTasks(String userId) {
     return _firestore
         // .collection('users')
@@ -87,7 +99,7 @@ class TaskService {
     //     .toList());
   }
 
-    Stream<QuerySnapshot> getAvailableRefferalTasks(String userId) {
+  Stream<QuerySnapshot> getAvailableRefferalTasks(String userId) {
     return _firestore
         // .collection('users')
         // .doc(userId)

@@ -35,7 +35,7 @@ class DailyInviteScreenState extends State<DailyInviteScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Invite')),
       body: StreamBuilder<QuerySnapshot>(
-        stream: widget.taskService.getAvailableTasks(widget.user.id),
+        stream: widget.taskService.getAvailableRefferalTasks(widget.user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

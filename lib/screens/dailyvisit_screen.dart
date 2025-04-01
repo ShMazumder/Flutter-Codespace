@@ -13,19 +13,19 @@ class DailyVisitScreen extends StatefulWidget {
   final UserService userService;
   final Future<void> Function() callback;
 
-  const DailyVisitScreen(
-      {super.key,
-      required this.taskService,
-      required this.user,
-      required this.userService,
-      required this.callback});
+  const DailyVisitScreen({
+    super.key,
+    required this.taskService,
+    required this.user,
+    required this.userService,
+    required this.callback,
+  });
 
   @override
   DailyVisitScreenState createState() => DailyVisitScreenState();
 }
 
 class DailyVisitScreenState extends State<DailyVisitScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -36,7 +36,7 @@ class DailyVisitScreenState extends State<DailyVisitScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Daily Visit')),
       body: StreamBuilder<QuerySnapshot>(
-        stream: widget.taskService.getAvailableTasks(widget.user.id),
+        stream: widget.taskService.getAvailableVisitTasks(widget.user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -62,7 +62,6 @@ class DailyVisitScreenState extends State<DailyVisitScreen> {
                 children: [
                   PointsDisplay(),
                   const SizedBox(height: 16),
-
                   TaskList(
                     tasks: tasks,
                     user: widget.user, // Make sure to pass the UserModel

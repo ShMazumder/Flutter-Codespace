@@ -35,7 +35,7 @@ class DailyRewardScreenState extends State<DailyRewardScreen> {
     return Scaffold(
       appBar: AppBar(title: Text('Daily Reward')),
       body: StreamBuilder<QuerySnapshot>(
-        stream: widget.taskService.getAvailableTasks(widget.user.id),
+        stream: widget.taskService.getAvailableRewardTasks(widget.user.id),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
