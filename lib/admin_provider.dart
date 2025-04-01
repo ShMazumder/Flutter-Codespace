@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_app/models/task_model.dart';
 
 class AdminProvider with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -21,13 +22,15 @@ class AdminProvider with ChangeNotifier {
     required String title,
     required String description,
     required int points,
-    required String type,
+    required TaskType type, // 'ad', 'visit', 'invite'
+    String? link, // Required for 'visit' tasks
   }) async {
     await _firestore.collection('tasks').add({
       'title': title,
       'description': description,
       'points': points,
-      'type': type,
+      'type': type.name,
+      'link': type == TaskType.dailyVisit ? link : null, // Store link only for visit tasks
       'isDefault': true,
       'status': 'available',
       'createdAt': FieldValue.serverTimestamp(),

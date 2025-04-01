@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/models/task_model.dart';
 import 'package:provider/provider.dart';
 import '../admin_provider.dart';
 
@@ -12,7 +13,7 @@ class _AdminScreenState extends State<AdminScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _pointsController = TextEditingController();
-  String _taskType = 'daily';
+  TaskType _taskType = TaskType.dailyVisit;
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +41,12 @@ class _AdminScreenState extends State<AdminScreen> {
                 keyboardType: TextInputType.number,
                 validator: (value) => value!.isEmpty ? 'Required' : null,
               ),
-              DropdownButtonFormField<String>(
+              DropdownButtonFormField<TaskType>(
                 value: _taskType,
                 items: [
-                  DropdownMenuItem(value: 'daily', child: Text('Daily Task')),
-                  DropdownMenuItem(value: 'special', child: Text('Special Task')),
-                  DropdownMenuItem(value: 'referral', child: Text('Referral Task')),
+                  DropdownMenuItem(value: TaskType.dailyVisit, child: Text('Daily Visit')),
+                  DropdownMenuItem(value: TaskType.dailyWatchAd, child: Text('Daily Watch')),
+                  DropdownMenuItem(value: TaskType.invite, child: Text('Invite Task')),
                 ],
                 onChanged: (value) => setState(() => _taskType = value!),
               ),

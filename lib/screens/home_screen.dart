@@ -13,8 +13,6 @@ import '../admin_provider.dart';
 import '../models/task_model.dart';
 import 'admin_screen.dart';
 import '../auth_provider.dart';
-import '../services/task_service.dart';
-import '../services/user_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
