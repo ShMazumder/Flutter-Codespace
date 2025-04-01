@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/components/points_display.dart';
 import 'package:flutter_app/components/task_list.dart';
 import 'package:flutter_app/models/task_model.dart';
 import 'package:flutter_app/models/user_model.dart';
@@ -58,7 +59,7 @@ class DailyRewardScreenState extends State<DailyRewardScreen> {
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  // PointsDisplay(),
+                  PointsDisplay(),
                   const SizedBox(height: 16),
                   TaskList(
                     tasks: tasks,
