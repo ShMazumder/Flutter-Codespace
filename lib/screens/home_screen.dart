@@ -87,19 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: _screens,
         onPageChanged: (index) => setState(() => _currentIndex = index),
       ),
-      bottomNavigationBar: _buildBottomNavBar(adminProvider),
-    );
-  }
-
-  Widget _buildBottomNavBar(AdminProvider adminProvider) {
-    return MainNavBar(
-      currentIndex: _currentIndex,
-      onTap: (index) {
-        // Prevent navigation to admin screen if not admin
-        // if (index == 1 && !adminProvider.isAdmin) return;
-        _pageController.jumpToPage(index);
-        setState(() => _currentIndex = index);
-      },
+      bottomNavigationBar: MainNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          _pageController.jumpToPage(index);
+          setState(() => _currentIndex = index);
+        },
+      ),
     );
   }
 
