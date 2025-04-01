@@ -80,11 +80,8 @@ class TaskService {
         // .collection('users')
         // .doc(userId)
         .collection('tasks')
-        .where('status', isEqualTo: 'available')
+        .where('type', isEqualTo: TaskType.dailyVisit.name)
         .snapshots();
-    // .map((snapshot) => snapshot.docs
-    //     .map((doc) => Task.fromFirestore(doc))
-    //     .toList());
   }
 
   Stream<QuerySnapshot> getAvailableRewardTasks(String userId) {
@@ -92,11 +89,8 @@ class TaskService {
         // .collection('users')
         // .doc(userId)
         .collection('tasks')
-        .where('status', isEqualTo: 'available')
+        .where('type', isEqualTo: TaskType.dailyWatchAd.name)
         .snapshots();
-    // .map((snapshot) => snapshot.docs
-    //     .map((doc) => Task.fromFirestore(doc))
-    //     .toList());
   }
 
   Stream<QuerySnapshot> getAvailableRefferalTasks(String userId) {
@@ -104,10 +98,7 @@ class TaskService {
         // .collection('users')
         // .doc(userId)
         .collection('tasks')
-        .where('status', isEqualTo: 'available')
+        .where('type', isEqualTo: TaskType.invite.name)
         .snapshots();
-    // .map((snapshot) => snapshot.docs
-    //     .map((doc) => Task.fromFirestore(doc))
-    //     .toList());
   }
 }
