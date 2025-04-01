@@ -13,7 +13,8 @@ class _AdminScreenState extends State<AdminScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _pointsController = TextEditingController();
-  TaskType _taskType = TaskType.dailyVisit;
+  final _linkController = TextEditingController(); // New field for visit tasks
+  TaskType _taskType = TaskType.dailyWatchAd; // Updated default type
 
   @override
   Widget build(BuildContext context) {
@@ -44,12 +45,20 @@ class _AdminScreenState extends State<AdminScreen> {
               DropdownButtonFormField<TaskType>(
                 value: _taskType,
                 items: [
-                  DropdownMenuItem(value: TaskType.dailyVisit, child: Text('Daily Visit')),
-                  DropdownMenuItem(value: TaskType.dailyWatchAd, child: Text('Daily Watch')),
+                  DropdownMenuItem(value: TaskType.dailyWatchAd, child: Text('Daily Watch Ad Task')),
+                  DropdownMenuItem(value: TaskType.dailyVisit, child: Text('Daily Visit Task')),
                   DropdownMenuItem(value: TaskType.invite, child: Text('Invite Task')),
                 ],
                 onChanged: (value) => setState(() => _taskType = value!),
               ),
+              // Show link input only for "visit" tasks
+              if (_taskType == TaskType.dailyVisit)
+                TextFormField(
+                  controller: _linkController,
+                  decoration: InputDecoration(labelText: 'Visit Link (URL)'),
+                  validator: (value) => 
+                      _taskType == TaskType.dailyVisit && value!.isEmpty ? 'Required' : null,
+                ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
@@ -70,6 +79,7 @@ class _AdminScreenState extends State<AdminScreen> {
           description: _descController.text,
           points: int.parse(_pointsController.text),
           type: _taskType,
+          link: _taskType == TaskType.dailyVisit ? _linkController.text : null,
         );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Task added successfully!')),
@@ -77,6 +87,7 @@ class _AdminScreenState extends State<AdminScreen> {
         _titleController.clear();
         _descController.clear();
         _pointsController.clear();
+        _linkController.clear();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
@@ -90,6 +101,7 @@ class _AdminScreenState extends State<AdminScreen> {
     _titleController.dispose();
     _descController.dispose();
     _pointsController.dispose();
+    _linkController.dispose(); // Dispose the new controller
     super.dispose();
   }
 }

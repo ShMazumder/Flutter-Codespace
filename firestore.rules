@@ -108,7 +108,7 @@ service cloud.firestore {
       request.resource.data.title is string &&
       request.resource.data.points is number &&
       request.resource.data.points > 0 &&
-      request.resource.data.type in ['daily', 'special', 'referral', 'ad'] &&
+      request.resource.data.type in ['daily', 'special', 'referral', 'ad', 'dailyWatchAd', 'dailyVisit', 'invite'] &&
       request.resource.data.createdAt == request.time;
     }
     
