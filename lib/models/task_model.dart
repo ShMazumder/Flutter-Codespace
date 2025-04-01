@@ -87,6 +87,12 @@ class Task {
 
   static TaskType _getType(String type) {
     switch (type) {
+      case 'dailyWatchAd':
+        return TaskType.dailyWatchAd;
+      case 'dailyVisit':
+        return TaskType.dailyVisit;
+      case 'invite':
+        return TaskType.invite;
       case 'special':
         return TaskType.special;
       case 'referral':

@@ -199,8 +199,9 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: _taskService.getAvailableTasks(user.id),
       builder: (context, snapshot) {
         if (snapshot.hasError) return const SizedBox();
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const SizedBox();
+        }
 
         final specialTasks = snapshot.data!.docs
             .map((doc) => Task.fromFirestore(doc))
