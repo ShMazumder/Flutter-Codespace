@@ -22,6 +22,7 @@ class Task {
   final DateTime? completedAt;
   final bool isDaily;
   final int requiredStreak;
+  final String? link;
 
   Task({
     required this.id,
@@ -35,6 +36,7 @@ class Task {
     this.completedAt,
     this.isDaily = true,
     this.requiredStreak = 0,
+    this.link,
   });
 
   factory Task.fromFirestore(DocumentSnapshot doc) {
@@ -51,6 +53,7 @@ class Task {
       completedAt: data['completedAt']?.toDate(),
       isDaily: data['isDaily'] ?? true,
       requiredStreak: data['requiredStreak'] ?? 0,
+      link: data['link'] ?? '',
     );
   }
 

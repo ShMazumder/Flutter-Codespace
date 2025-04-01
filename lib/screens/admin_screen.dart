@@ -47,8 +47,8 @@ class _AdminScreenState extends State<AdminScreen> {
               DropdownButtonFormField<TaskType>(
                 value: _taskType,
                 items: [
-                  DropdownMenuItem(value: TaskType.dailyWatchAd, child: Text('Daily Watch Ad Task')),
                   DropdownMenuItem(value: TaskType.dailyVisit, child: Text('Daily Visit Task')),
+                  DropdownMenuItem(value: TaskType.dailyWatchAd, child: Text('Daily Watch Ad Task')),
                   DropdownMenuItem(value: TaskType.invite, child: Text('Invite Task')),
                 ],
                 onChanged: (value) => setState(() => _taskType = value!),
