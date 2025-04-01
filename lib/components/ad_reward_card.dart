@@ -8,10 +8,10 @@ class AdRewardCard extends StatefulWidget {
   const AdRewardCard({super.key});
 
   @override
-  _AdRewardCardState createState() => _AdRewardCardState();
+  AdRewardCardState createState() => AdRewardCardState();
 }
 
-class _AdRewardCardState extends State<AdRewardCard> {
+class AdRewardCardState extends State<AdRewardCard> {
   late final AdService _adService;
   bool _isLoading = false;
   String? _error;
