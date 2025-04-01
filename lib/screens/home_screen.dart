@@ -69,17 +69,17 @@ class HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      appBar: _currentIndex == 0
-          ? AppBar(
-              title: const Text('Daily Tasks'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  onPressed: _showNotifications,
-                ),
-              ],
-            )
-          : null,
+      // appBar: _currentIndex == 0
+      //     ? AppBar(
+      //         title: const Text('Daily Tasks'),
+      //         actions: [
+      //           IconButton(
+      //             icon: const Icon(Icons.notifications),
+      //             onPressed: _showNotifications,
+      //           ),
+      //         ],
+      //       )
+      //     : null,
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
