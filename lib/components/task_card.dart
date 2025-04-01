@@ -7,6 +7,8 @@ import '../services/referral_service.dart';
 import '../services/task_service.dart';
 import '../services/user_service.dart';
 import '../models/user_model.dart';
+import '../components/referral_section.dart';
+import '../components/ad_reward_card.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -24,53 +26,62 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: task.color.withAlpha(40),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(task.icon, color: task.color, size: 28),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+    switch (task.type) {
+      case TaskType.dailyWatchAd:
+        return AdRewardCard();
+      case TaskType.dailyVisit:
+        return _buildVisitTaskButton(context);
+      case TaskType.invite:
+        return ReferralSection();
+      default:
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: task.color.withAlpha(40),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    task.description,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14,
-                    ),
+                  child: Icon(task.icon, color: task.color, size: 28),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task.title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        task.description,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 12),
+                _buildActionButton(context),
+              ],
             ),
-            const SizedBox(width: 12),
-            _buildActionButton(context),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+    }
   }
 
   Widget _buildActionButton(BuildContext context) {

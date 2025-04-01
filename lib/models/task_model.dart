@@ -3,7 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum TaskStatus { available, participated, completed }
 
-enum TaskType { daily, special, referral, ad, dailyWatchAd, dailyVisit, invite }
+enum TaskType {
+  // daily, special, referral, ad,
+  dailyWatchAd,
+  dailyVisit,
+  invite
+}
 
 class Task {
   final String id;
@@ -93,14 +98,14 @@ class Task {
         return TaskType.dailyVisit;
       case 'invite':
         return TaskType.invite;
-      case 'special':
-        return TaskType.special;
-      case 'referral':
-        return TaskType.referral;
-      case 'ad':
-        return TaskType.ad;
+      // case 'special':
+      //   return TaskType.special;
+      // case 'referral':
+      //   return TaskType.referral;
+      // case 'ad':
+      //   return TaskType.ad;
       default:
-        return TaskType.daily;
+        return TaskType.dailyWatchAd;
     }
   }
 

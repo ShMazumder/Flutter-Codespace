@@ -6,8 +6,8 @@ class TaskService {
 
   Stream<QuerySnapshot> getAvailableTasks(String userId) {
     return _firestore
-        .collection('users')
-        .doc(userId)
+        // .collection('users')
+        // .doc(userId)
         .collection('tasks')
         .where('status', isEqualTo: 'available')
         .snapshots();
@@ -26,8 +26,8 @@ class TaskService {
         .doc(userId)
         .collection('tasks')
         .doc(taskId)
-        .update({
-      'status': status.toString().split('.').last,
+        .set({
+      'status': status.name,
       if (status == TaskStatus.completed)
         'completedAt': FieldValue.serverTimestamp(),
     });
@@ -74,4 +74,28 @@ class TaskService {
   //     });
   //   }
   // }
+
+  Stream<QuerySnapshot> getAvailableRewardTasks(String userId) {
+    return _firestore
+        // .collection('users')
+        // .doc(userId)
+        .collection('tasks')
+        .where('status', isEqualTo: 'available')
+        .snapshots();
+    // .map((snapshot) => snapshot.docs
+    //     .map((doc) => Task.fromFirestore(doc))
+    //     .toList());
+  }
+
+    Stream<QuerySnapshot> getAvailableRefferalTasks(String userId) {
+    return _firestore
+        // .collection('users')
+        // .doc(userId)
+        .collection('tasks')
+        .where('status', isEqualTo: 'available')
+        .snapshots();
+    // .map((snapshot) => snapshot.docs
+    //     .map((doc) => Task.fromFirestore(doc))
+    //     .toList());
+  }
 }
