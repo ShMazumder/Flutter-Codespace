@@ -8,7 +8,8 @@ class PointsDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel>(context);
-    
+    print("${user.points}");
+
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
