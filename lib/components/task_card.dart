@@ -29,10 +29,9 @@ class TaskCard extends StatelessWidget {
     switch (task.type) {
       case TaskType.dailyWatchAd:
         return AdRewardCard();
-      case TaskType.dailyVisit:
-        return _buildVisitTaskButton(context);
       case TaskType.invite:
         return ReferralSection();
+      case TaskType.dailyVisit:
       default:
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
