@@ -7,7 +7,8 @@ import 'auth_provider.dart';
 import 'screens/auth_screen.dart';
 import 'screens/home_screen.dart';
 import 'firebase_options.dart';
-import 'models/user_model.dart'; // Add this import
+import 'models/user_model.dart'; 
+import 'admin_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
       ],
       child: MyApp(),
     ),
@@ -55,7 +57,7 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    
+
     if (authProvider.user == null) {
       return AuthScreen();
     } else {

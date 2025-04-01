@@ -1,9 +1,132 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
+    // -------------------------------------------------------------------------
+    // Default DENY all access (explicitly allow specific operations below)
+    // -------------------------------------------------------------------------
     match /{document=**} {
-      allow read, write: if request.auth!=null;
+      allow read, write: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // User Profile Rules
+    // -------------------------------------------------------------------------
+    match /users/{userId} {
+      // Users can read their own profile
+      allow get: if isUser(userId);
+      
+      // Users can create their own profile with validated data
+      allow create: if isUser(userId) && 
+                    isValidUserProfile();
+      
+      // Users can update only specific fields in their profile
+      allow update: if isUser(userId) && 
+                    onlyAllowedUserUpdates();
+    }
+
+    // -------------------------------------------------------------------------
+    // Task Management Rules
+    // -------------------------------------------------------------------------
+    match /tasks/{taskId} {
+      // Public read access to tasks
+      allow list, get: if true;
+      
+      // Admin-only task creation with validation
+      allow create: if isAdmin() && 
+                   isValidTask();
+    }
+
+    // -------------------------------------------------------------------------
+    // User-Specific Task Progress
+    // -------------------------------------------------------------------------
+    match /users/{userId}/tasks/{taskId} {
+      // Users can see their own tasks
+      allow get, list: if isUser(userId);
+      
+      // System can initialize user tasks (via Cloud Function)
+      allow create: if isAdmin();
+      
+      // Users can only update status fields
+      allow update: if isUser(userId) && 
+                   onlyAllowedTaskUpdates();
+    }
+
+    // -------------------------------------------------------------------------
+    // Referral System Rules
+    // -------------------------------------------------------------------------
+    match /users/{userId}/referrals/{referralId} {
+      // Users can see their own referrals
+      allow get, list: if isUser(userId);
+      
+      // System can create referrals (when someone uses their code)
+      allow create: if request.auth != null;
+      
+      // Admins can mark referrals as awarded
+      allow update: if isAdmin() && 
+                   onlyAwardStatusUpdate();
+    }
+
+    // -------------------------------------------------------------------------
+    // Admin Management Rules
+    // -------------------------------------------------------------------------
+    match /admins/{adminId} {
+      // Admins can check who else is admin
+      allow get: if isAdmin();
+      
+      // NO client-side writes - manage exclusively through Admin SDK/Console
+      allow write: if false;
+    }
+
+    // =========================================================================
+    // Security Helper Functions
+    // =========================================================================
+    
+    // Authentication checks
+    function isUser(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isUser(request.auth.uid) && 
+             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Data validation functions
+    function isValidUserProfile() {
+      return request.resource.data.keys().hasAll([
+        'name', 'email', 'points', 'dailyStreak'
+      ]) &&
+      request.resource.data.name is string &&
+      request.resource.data.points is number &&
+      request.resource.data.points >= 0;
+    }
+    
+    function isValidTask() {
+      return request.resource.data.keys().hasAll([
+        'title', 'description', 'points', 'type', 'isDefault'
+      ]) &&
+      request.resource.data.title is string &&
+      request.resource.data.points is number &&
+      request.resource.data.points > 0 &&
+      request.resource.data.type in ['daily', 'special', 'referral', 'ad'] &&
+      request.resource.data.createdAt == request.time;
+    }
+    
+    function onlyAllowedUserUpdates() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['points', 'dailyStreak', 'adsViewedToday', 'totalReferrals']);
+    }
+    
+    function onlyAllowedTaskUpdates() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['status', 'completedAt']) &&
+        request.resource.data.status in ['participated', 'completed'];
+    }
+    
+    function onlyAwardStatusUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+        .hasOnly(['pointsAwarded']) &&
+        request.resource.data.pointsAwarded == true;
     }
   }
 }
