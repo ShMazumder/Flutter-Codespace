@@ -9,6 +9,7 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late Map<String, dynamic> userModel;
 
   Stream<User?> get user => _auth.authStateChanges();
 
@@ -47,7 +48,7 @@ class AuthService {
     final userDoc = await _firestore.collection('users').doc(user.uid).get();
 
     if (!userDoc.exists) {
-      await _firestore.collection('users').doc(user.uid).set({
+      userModel = {
         'name': user.displayName,
         'email': user.email,
         'photoUrl': user.photoURL,
@@ -56,8 +57,11 @@ class AuthService {
         'adsViewedToday': 0,
         'totalReferrals': 0,
         'referralCode': _generateReferralCode(),
-      });
+      };
+      await _firestore.collection('users').doc(user.uid).set(userModel);
       await _addDefaultTasks(user.uid);
+    } else {
+      userModel = userDoc.data() ?? {};
     }
   }
 
